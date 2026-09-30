@@ -1,0 +1,1 @@
+export default function RegisterPage(){return <main className="p-8"><h1 className="text-3xl font-bold">Request an Account</h1><p className="mt-3">Customer onboarding will be implemented in its dedicated phase.</p></main>}

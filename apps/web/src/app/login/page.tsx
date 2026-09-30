@@ -1,0 +1,1 @@
+export default function LoginPage(){return <main className="p-8"><h1 className="text-3xl font-bold">Customer Login</h1><p className="mt-3">Authentication will be implemented in the account phase.</p></main>}
