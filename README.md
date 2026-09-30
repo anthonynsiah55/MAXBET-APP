@@ -13,9 +13,15 @@ Maxbet is a Ghana-first B2B wholesale pharmacy platform.
 ## Local development
 
 1. Install dependencies with `npm install`.
-2. Copy `.env.example` to a local `.env` and provide the required Supabase values.
+2. Copy `apps/web/.env.example` to `apps/web/.env.local` and provide the Maxbet public key.
 3. Run `npm run dev`.
 
 Never commit real credentials or production secrets.
 
 See `docs/architecture/foundation.md` for the approved foundation baseline.
+
+Verify with `npm ci`, `npm run lint`, `npm run typecheck`, and `npm run build`. Run the production build with `npm run start`.
+
+Account and staff placeholders redirect to login until authentication and authorization are implemented. They contain no business data.
+
+See `docs/architecture/environment.md` for the connected project and deployment settings.
