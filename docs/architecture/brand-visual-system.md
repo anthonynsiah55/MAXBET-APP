@@ -1,6 +1,6 @@
 # Phase 2: Brand and visual system
 
-Status: Implemented for visual review. The supplied identity is preserved; final visual approval is pending.
+Status: COMPLETE. The owner approved this visual direction on 30 September 2026. The supplied identity is preserved.
 
 ## Identity
 
@@ -24,4 +24,4 @@ The `/brand` page is a component reference and is marked noindex. Example fields
 
 One monorepo continues from the verified foundation merged through PR #1. Phase 2 adds visual assets, components and public page shells. Authentication, business data, operational dashboards and database schemas remain dedicated later-phase work. There are no new Supabase changes.
 
-Review the homepage and `/brand` reference before treating this visual direction as approved. The existing logo and no-tagline decision are fixed requirements; spacing, typography and page styling are reviewable choices.
+The homepage and `/brand` reference form the approved visual baseline. Preserve the supplied logo, green-and-blue direction and no-tagline decision in subsequent phases. Production verification passed in GitHub run 36729634734; mobile navigation and responsive layouts were also inspected.
