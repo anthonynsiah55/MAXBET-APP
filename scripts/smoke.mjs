@@ -65,3 +65,13 @@ assert.match(detail, /href="\/products\?category=protection"/);
 assert.equal((await fetch(new URL('/products/not-a-sample', base))).status, 404);
 for (const route of ['/help', '/about']) assert.match(await pageHTML(route), /id="main-content"/);
 console.log('Passed: customer catalogue search, filters, sort, pagination, empty/invalid states, details and guidance.');
+
+const registration = await pageHTML('/register');
+assert.match(registration, /<fieldset disabled=""/);
+assert.doesNotMatch(registration, /<form[\s>]/);
+assert.match(registration, /Both a phone number and email address are required/);
+const accountPreview = await pageHTML('/account-preview?state=approved');
+assert.match(accountPreview, /This is a design preview, not your account status/);
+assert.match(accountPreview, /Your business account is approved/);
+assert.match(await pageHTML('/account-preview?state=__proto__'), /Your business request is being reviewed/);
+console.log('Passed: account preview cannot collect registration or grant account access.');

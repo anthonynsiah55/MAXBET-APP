@@ -8,6 +8,10 @@ PR #1 merged into main as `e9c01aaa5557141757e45bbfcd32d550a85cb1ec`. GitHub ver
 
 Uses the supplied Maxbet logo with no tagline. Includes a shared responsive visual system, homepage, catalogue/account information shells, component reference and empty/error states. The owner approved the visual direction on 30 September 2026. Production build, lint, type-check and route/asset smoke checks passed in GitHub run 36729634734.
 
-## 3. Customer-Facing Frontend — implemented for review
+## 3. Customer-Facing Frontend — COMPLETE
 
-Public browsing, catalogue controls, sample detail pages, Help/About and responsive navigation are being verified on `frontend/customer-experience`. Sample fixtures contain no live product, stock or pricing data. See `roadmap.md` for the owner's full 25-phase sequence and `architecture/customer-frontend.md` for scope.
+PR #3 merged as eda413b744ed407f98be25af60fd00852c484072. CI run 36812423112 passed install, lint, typecheck, production build and route checks. Desktop and 390px mobile source-preview inspection passed on 1 October 2026, including search, empty results, details, mobile navigation and Help disclosure.
+
+## 4. Customer Account & Verification — IN PROGRESS
+
+Owner confirmed both phone and email are required. The registration and account-review interface is being prepared on accounts/registration-experience. No real signup or account decisions are enabled. See architecture/customer-accounts.md for the boundary and remaining completion criteria.
