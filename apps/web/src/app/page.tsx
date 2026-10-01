@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { categories } from '../lib/catalogue/preview';
 import { ActionLink, Arrow } from '../components/ui';
 
 export default function HomePage() {
@@ -10,7 +11,7 @@ export default function HomePage() {
     </section>
     <section className="access-strip"><div className="container access-strip-inner"><span className="section-index">01 / ACCESS</span><p>Start with the catalogue.<br /><strong>Continue with an approved account.</strong></p><Link href="/register" className="text-link">Understand account access <Arrow /></Link></div></section>
     <section className="container section" id="how-it-works"><div className="section-heading"><div><p className="eyebrow">A CLEAR PATH TO GETTING STARTED</p><h2>From browsing<br />to business access.</h2></div><p>The platform is taking shape. Here is how the customer experience will work when services open.</p></div><div className="steps-grid">{[{n:'01',title:'Explore the catalogue',text:'Discover the products Maxbet offers through a public catalogue.',href:'/products',label:'Catalogue preview'},{n:'02',title:'Request an account',text:'Submit your business details when account registration opens.',href:'/register',label:'Account information'},{n:'03',title:'Access wholesale services',text:'Once approved, sign in to view wholesale prices, availability and purchasing.',href:'/login',label:'Sign-in information'}].map(step=><article className="step-card" key={step.n}><span className="step-number">{step.n}</span><h3>{step.title}</h3><p>{step.text}</p><Link href={step.href}>{step.label}<Arrow diagonal /></Link></article>)}</div></section>
+    <section className="container section category-section"><div className="section-heading"><div><p className="eyebrow">CATALOGUE PREVIEW</p><h2>Browse by category.</h2></div><p>Explore sample items and try the browsing experience. Live product listings will follow.</p></div><div className="category-links">{categories.map(category => <Link className="category-link" href={`/products?category=${category.id}`} key={category.id}><span><small>{category.mark} / SAMPLE CATEGORY</small><strong>{category.name}</strong></span><Arrow diagonal /></Link>)}</div></section>
     <section className="container bottom-callout"><div><p className="eyebrow">BUSINESS ACCOUNT ACCESS</p><h2>Your next step with Maxbet.</h2><p>Learn what an approved account will give your pharmacy access to.</p></div><ActionLink href="/register">View account information</ActionLink></section>
   </main>;
 }
-
