@@ -1,0 +1,7 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { ActionLink } from '../../components/ui';
+export const metadata: Metadata = { title: 'About the platform' };
+export default function AboutPage() {
+  return <main id="main-content" className="container"><nav className="breadcrumbs" aria-label="Breadcrumb"><Link href="/">Home</Link><span aria-hidden="true">/</span><span aria-current="page">About</span></nav><div className="page-intro"><p className="eyebrow">MAXBET PHARMACY LTD</p><h1>A dedicated space for your pharmacy.</h1><p>The Maxbet wholesale pharmacy platform is being built for pharmacy businesses in Ghana, bringing product browsing and approved customer services into one place.</p></div><div className="page-body"><div className="about-grid"><article className="info-card"><h2>Browse with clarity.</h2><p>A public catalogue helps you explore item information before you request business account access.</p></article><article className="info-card"><h2>Access for your business.</h2><p>Approved accounts will unlock wholesale prices, availability and purchasing when those services launch.</p></article><article className="info-card"><h2>Use it on your device.</h2><p>Customer pages adapt to phones, tablets and desktop screens, with consistent navigation and clear labels.</p></article></div><ActionLink href="/products">Explore the catalogue preview</ActionLink></div></main>;
+}

@@ -7,3 +7,7 @@ PR #1 merged into main as `e9c01aaa5557141757e45bbfcd32d550a85cb1ec`. GitHub ver
 ## 2. Brand and visual system — COMPLETE
 
 Uses the supplied Maxbet logo with no tagline. Includes a shared responsive visual system, homepage, catalogue/account information shells, component reference and empty/error states. The owner approved the visual direction on 30 September 2026. Production build, lint, type-check and route/asset smoke checks passed in GitHub run 36729634734.
+
+## 3. Customer-Facing Frontend — implemented for review
+
+Public browsing, catalogue controls, sample detail pages, Help/About and responsive navigation are being verified on `frontend/customer-experience`. Sample fixtures contain no live product, stock or pricing data. See `roadmap.md` for the owner's full 25-phase sequence and `architecture/customer-frontend.md` for scope.
