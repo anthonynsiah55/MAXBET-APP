@@ -14,6 +14,7 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
+      - run: node scripts/auth-checks.mjs
       - run: npm run build
       - name: Verify production routes
         shell: bash

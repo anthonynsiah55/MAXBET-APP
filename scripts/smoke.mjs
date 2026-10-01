@@ -75,3 +75,14 @@ assert.match(accountPreview, /This is a design preview, not your account status/
 assert.match(accountPreview, /Your business account is approved/);
 assert.match(await pageHTML('/account-preview?state=__proto__'), /Your business request is being reviewed/);
 console.log('Passed: account preview cannot collect registration or grant account access.');
+
+const callback = await fetch(new URL('/auth/callback?code=invalid&next=https://example.org', base), { redirect: 'manual' });
+assert.equal(callback.status, 307);
+assert.equal(new URL(callback.headers.get('location')).pathname, '/login');
+assert.equal(new URL(callback.headers.get('location')).origin, new URL(base).origin);
+assert.match(callback.headers.get('cache-control'), /private, no-store/);
+for (const route of ['/login', '/register', '/account']) {
+  const response = await fetch(new URL(route, base), { redirect: 'manual' });
+  assert.match(response.headers.get('cache-control'), /private, no-store/);
+}
+console.log('Passed: authentication callbacks use local destinations and private responses are not cacheable.');
