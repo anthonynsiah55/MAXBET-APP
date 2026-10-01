@@ -86,3 +86,8 @@ for (const route of ['/login', '/register', '/account']) {
   assert.match(response.headers.get('cache-control'), /private, no-store/);
 }
 console.log('Passed: authentication callbacks use local destinations and private responses are not cacheable.');
+
+const staffQueue = await fetch(new URL('/admin/accounts', base), { redirect: 'manual' });
+assert.equal(staffQueue.status, 307);
+assert.equal(new URL(staffQueue.headers.get('location'), base).pathname, '/login');
+assert.match(staffQueue.headers.get('cache-control'), /private, no-store/);
