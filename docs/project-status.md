@@ -15,3 +15,5 @@ PR #3 merged as eda413b744ed407f98be25af60fd00852c484072. CI run 36812423112 pas
 ## 4. Customer Account & Verification — IN PROGRESS
 
 Owner confirmed both phone and email are required. The registration and account-review interface is being prepared on accounts/registration-experience. No real signup or account decisions are enabled. See architecture/customer-accounts.md for the boundary and remaining completion criteria.
+
+On 2 October 2026, the existing account migration was verified in MAXBET B2B APP under MAXBET PHARMACY (ufcerqtdlvtflvkkorzs). Migration history version: 20261001044328. Recovery and initial phone verification code have been added behind disabled delivery switches. Live provider tests and named reviewer setup remain outstanding.

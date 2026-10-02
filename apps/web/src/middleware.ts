@@ -22,4 +22,4 @@ export async function middleware(request: NextRequest) {
   response.headers.set('Cache-Control', 'private, no-store');
   return response;
 }
-export const config = { matcher: ['/account/:path*', '/auth/:path*', '/login', '/register', '/admin/:path*'] };
+export const config = { matcher: ['/account/:path*', '/auth/:path*', '/login', '/register', '/recover', '/admin/:path*'] };

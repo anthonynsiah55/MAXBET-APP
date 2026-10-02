@@ -1,6 +1,13 @@
 # Phase 4: Customer Account & Verification
 
-Status: In progress. First increment is a non-collecting registration and review-state interface.
+Status: In progress. Authentication, records/review, recovery and initial phone-linking code are implemented behind closed feature switches.
+
+## Confirmed deployment — 2 October 2026
+
+Project: MAXBET B2B APP, organization MAXBET PHARMACY, project ref ufcerqtdlvtflvkkorzs.
+Live migration customer_accounts / 20261001044328 was found already installed. Its normalized SQL hash matches the repository migration (MD5 5761d7fa21a53372f3661c5f821f7569). Three account tables, six functions and the customer/reviewer read policies were verified. The local migration filename is now aligned to the existing remote history; do not apply it again or edit its contents.
+
+Historical implementation notes below describe what was true when each increment was prepared; the deployment status above supersedes their earlier not-applied statements.
 
 ## Confirmed requirements
 
@@ -58,3 +65,15 @@ The gated /admin/accounts page and server action use a server-verified session a
 CI uses disposable PostgreSQL 17, a minimal auth schema fixture and application roles. It applies the migration and tests anonymous denial, cross-customer isolation, unverified submission, direct-write denial, self-approval, reviewer revocation, duplicate links, stale updates, allowed transitions and immutable application audit records. This validates PostgreSQL rules, not the real Supabase Auth/PostgREST deployment.
 
 Before activation, test against a non-production Supabase environment, run database advisors, confirm only public is exposed, apply the reviewed migration through the migration workflow, and provision named staff reviewers through a controlled administrator operation. No staff identity has been granted reviewer access by this work. Do not enable the switches until real contact verification, recovery, session behavior and reviewer operations are verified. Future wholesale queries must check current approval AND current verified matching contacts; a cached approved status alone is insufficient after contact changes.
+
+## Recovery and phone linking — 2 October 2026
+
+Added /recover and /account/verify-phone. Both are independently gated off, in addition to the main account switch.
+
+Recovery uses resetPasswordForEmail followed by email + recovery OTP + new password. A fresh non-persisting Supabase client verifies type=recovery; it never uses the caller's existing browser session to authorize a password reset. Update occurs only after an eligible matching identity and recovery session are returned. The recovery session is signed out with global scope on completion; previously issued access tokens may remain valid until expiry, and revocation failures are not a guarantee of immediate logout. Generic request responses do not disclose whether an address exists or the provider failed. Passwords/codes are submitted only in POST bodies, never URLs or logs.
+
+Activation prerequisite: configure the Reset Password email template to include {{ .Token }} (see supabase/templates/recovery.html), configure a trusted Site URL, test SMTP delivery, expiry/replay behavior, Supabase rate limits and abuse controls, then set MAXBET_RECOVERY_ENABLED=true. The default recovery-link template is not compatible with this code-entry interface. No email templates/settings were changed or real recovery messages sent by this increment.
+
+Initial phone linking requires a current non-anonymous authenticated user and confirmed email. updateUser requests the code; verification uses Auth's new_phone field rather than a client-provided target number, with type=phone_change. It checks the returned owner and confirmed phone. Already-verified phone changes are intentionally not exposed here; they require a separate re-verification/review workflow. Provider enablement, actual SMS delivery, OTP expiry/replay and session-cookie tests remain prerequisites for MAXBET_PHONE_VERIFICATION_ENABLED=true.
+
+Tests mock provider boundaries and check closed gates, recovery token type, identity mismatch, password mismatch, generic request responses, email verification before SMS, pending-phone binding and prevention of changing a verified phone. CI also checks the new routes, caching and anonymous redirects. These tests do not constitute live provider verification.

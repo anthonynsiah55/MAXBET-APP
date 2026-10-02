@@ -63,3 +63,74 @@ providerError = true;
 await redirects(() => actions.signIn(login), '/login?message=failed');
 await redirects(() => actions.register(form), '/register?message=failed');
 console.log('Passed: contact validation, password byte limit, project isolation, closed signup, allowlisted metadata, normalized sign-in and generic provider failures.');
+
+let deliveryOpen=false;
+let recoveryOtpValid=false;
+let updateCount=0;
+let otpType;
+let recoveredEmail='test@example.com';
+const recoveryActions=load('apps/web/src/app/recover/actions.ts',{
+ 'next/navigation':{redirect:location=>{const e=new Error('redirect');e.location=location;throw e;}},
+ '../../lib/auth/validation':validation,
+ '../../lib/auth/delivery':{recoveryEnabled:()=>deliveryOpen},
+ '../../lib/supabase/recovery':{createRecoveryClient:()=>({auth:{
+  resetPasswordForEmail:async()=>{throw Error('Provider unavailable');},
+  verifyOtp:async input=>{otpType=input.type;return {error:recoveryOtpValid?null:{},data:{user:{id:'recovery-user',email:recoveredEmail},session:recoveryOtpValid?{}:null}};},
+  updateUser:async()=>{updateCount++;return {error:null};},
+  signOut:async()=>({error:null}),
+ }})},
+});
+const recoverForm=new FormData();
+Object.entries({email:'test@example.com',code:'123456',password:'new-password-123',confirm:'new-password-123'}).forEach(([k,v])=>recoverForm.set(k,v));
+await redirects(()=>recoveryActions.finishRecovery(recoverForm),'/recover?message=unavailable');
+assert.equal(updateCount,0);
+deliveryOpen=true;
+await redirects(()=>recoveryActions.requestRecovery(recoverForm),'/recover?message=requested');
+await redirects(()=>recoveryActions.finishRecovery(recoverForm),'/recover?message=failed');
+assert.equal(updateCount,0);
+assert.equal(otpType,'recovery');
+recoveryOtpValid=true;
+recoveredEmail='different@example.com';
+await redirects(()=>recoveryActions.finishRecovery(recoverForm),'/recover?message=failed');
+assert.equal(updateCount,0);
+recoveredEmail='test@example.com';
+recoverForm.set('confirm','mismatch');
+await redirects(()=>recoveryActions.finishRecovery(recoverForm),'/recover?message=invalid');
+assert.equal(updateCount,0);
+recoverForm.set('confirm','new-password-123');
+await redirects(()=>recoveryActions.finishRecovery(recoverForm),'/login?message=password-updated');
+assert.equal(updateCount,1);
+
+let phoneOpen=false;
+let phoneUser={id:'owner',email_confirmed_at:'verified',new_phone:'233240000000'};
+let phoneCalls=0;
+let verifiedInput;
+const phoneActions=load('apps/web/src/app/account/verify-phone/actions.ts',{
+ 'next/navigation':{redirect:location=>{const e=new Error('redirect');e.location=location;throw e;}},
+ 'next/cache':{revalidatePath:()=>{}},
+ '../../../lib/auth/validation':validation,
+ '../../../lib/auth/delivery':{phoneVerificationEnabled:()=>phoneOpen},
+ '../../../lib/supabase/server':{createServerAuthClient:async()=>({auth:{
+   getUser:async()=>({data:{user:phoneUser},error:null}),
+   updateUser:async()=>{phoneCalls++;return {error:null};},
+   verifyOtp:async input=>{verifiedInput=input;return {data:{user:{id:'owner',phone:'233240000000',phone_confirmed_at:'verified'}},error:null};},
+ }})},
+});
+const phoneForm=new FormData();phoneForm.set('phone','0240000000');phoneForm.set('code','123456');
+await redirects(()=>phoneActions.sendPhoneCode(phoneForm),'/account/verify-phone?message=unavailable');
+assert.equal(phoneCalls,0);
+phoneOpen=true;
+phoneUser.email_confirmed_at='';
+await redirects(()=>phoneActions.sendPhoneCode(phoneForm),'/account/verify-phone?message=email-first');
+assert.equal(phoneCalls,0);
+phoneUser.email_confirmed_at='verified';
+await redirects(()=>phoneActions.sendPhoneCode(phoneForm),'/account/verify-phone?message=sent');
+assert.equal(phoneCalls,1);
+phoneForm.set('phone','0249999999');
+await redirects(()=>phoneActions.confirmPhoneCode(phoneForm),'/account');
+assert.equal(verifiedInput.phone,'+233240000000');
+assert.equal(verifiedInput.type,'phone_change');
+phoneUser={...phoneUser,phone:'233240000000',phone_confirmed_at:'verified'};
+await redirects(()=>phoneActions.sendPhoneCode(phoneForm),'/account');
+assert.equal(phoneCalls,1);
+console.log('Passed: closed delivery gates, generic recovery request responses, recovery-only OTP, identity binding, password confirmation, verified-email requirement and pending-phone binding.');

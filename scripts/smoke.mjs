@@ -91,3 +91,11 @@ const staffQueue = await fetch(new URL('/admin/accounts', base), { redirect: 'ma
 assert.equal(staffQueue.status, 307);
 assert.equal(new URL(staffQueue.headers.get('location'), base).pathname, '/login');
 assert.match(staffQueue.headers.get('cache-control'), /private, no-store/);
+
+const recovery = await pageHTML('/recover');
+assert.match(recovery, /Recovery is being prepared/);
+assert.doesNotMatch(recovery, /<form[\s>]/);
+assert.match((await fetch(new URL('/recover', base))).headers.get('cache-control'), /private, no-store/);
+const phoneVerification = await fetch(new URL('/account/verify-phone', base), { redirect: 'manual' });
+assert.equal(phoneVerification.status, 307);
+assert.equal(new URL(phoneVerification.headers.get('location'), base).pathname, '/login');
