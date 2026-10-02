@@ -65,3 +65,37 @@ assert.match(detail, /href="\/products\?category=protection"/);
 assert.equal((await fetch(new URL('/products/not-a-sample', base))).status, 404);
 for (const route of ['/help', '/about']) assert.match(await pageHTML(route), /id="main-content"/);
 console.log('Passed: customer catalogue search, filters, sort, pagination, empty/invalid states, details and guidance.');
+
+const registration = await pageHTML('/register');
+assert.match(registration, /<fieldset disabled=""/);
+assert.doesNotMatch(registration, /<form[\s>]/);
+assert.match(registration, /Both a phone number and email address are required/);
+const accountPreview = await pageHTML('/account-preview?state=approved');
+assert.match(accountPreview, /This is a design preview, not your account status/);
+assert.match(accountPreview, /Your business account is approved/);
+assert.match(await pageHTML('/account-preview?state=__proto__'), /Your business request is being reviewed/);
+console.log('Passed: account preview cannot collect registration or grant account access.');
+
+const callback = await fetch(new URL('/auth/callback?code=invalid&next=https://example.org', base), { redirect: 'manual' });
+assert.equal(callback.status, 307);
+assert.equal(new URL(callback.headers.get('location')).pathname, '/login');
+assert.equal(new URL(callback.headers.get('location')).origin, new URL(base).origin);
+assert.match(callback.headers.get('cache-control'), /private, no-store/);
+for (const route of ['/login', '/register', '/account']) {
+  const response = await fetch(new URL(route, base), { redirect: 'manual' });
+  assert.match(response.headers.get('cache-control'), /private, no-store/);
+}
+console.log('Passed: authentication callbacks use local destinations and private responses are not cacheable.');
+
+const staffQueue = await fetch(new URL('/admin/accounts', base), { redirect: 'manual' });
+assert.equal(staffQueue.status, 307);
+assert.equal(new URL(staffQueue.headers.get('location'), base).pathname, '/login');
+assert.match(staffQueue.headers.get('cache-control'), /private, no-store/);
+
+const recovery = await pageHTML('/recover');
+assert.match(recovery, /Recovery is being prepared/);
+assert.doesNotMatch(recovery, /<form[\s>]/);
+assert.match((await fetch(new URL('/recover', base))).headers.get('cache-control'), /private, no-store/);
+const phoneVerification = await fetch(new URL('/account/verify-phone', base), { redirect: 'manual' });
+assert.equal(phoneVerification.status, 307);
+assert.equal(new URL(phoneVerification.headers.get('location'), base).pathname, '/login');

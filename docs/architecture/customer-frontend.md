@@ -1,6 +1,6 @@
 # Phase 3: Customer-facing frontend
 
-Status: Implemented for review.
+Status: Complete. PR #3 merged on 1 October 2026. CI run 36812423112 passed; desktop/mobile source-preview inspection completed, including search, empty state, detail layout, mobile navigation and Help disclosure.
 
 ## Scope
 
